@@ -140,31 +140,32 @@
   </footer>
 
   <script>
-    const API_KEY = 'bd7d39ec16e59690b05ffb4b61352dd6'; // Your Mediastack API key
-    const API_URL = `http://api.mediastack.com/v1/news?access_key=${API_KEY}&categories=health&languages=en&limit=6`;
-    const seenHeadlines = new Set();
+    const API_KEY = 'pub_80e03d38b2ea494298c400eedc9c17fa'; // Your NewsData.io API key
+    const API_URL = `https://newsdata.io/api/1/news?apikey=${API_KEY}&country=in&category=health&language=en&limit=6`;
 
     function createNewsCard(article) {
-      const { title, description, url, image } = article;
+      const title = article.title || "No title";
+      const description = article.description || "No description available.";
+      const url = article.link || "#";
+      const image = article.image_url || 'https://via.placeholder.com/400x200?text=No+Image';
+
       const card = document.createElement("article");
       card.className = "card";
       card.tabIndex = 0;
       card.setAttribute("aria-label", `Article: ${title}`);
 
-      // Create the image element with fallback on error
       const img = document.createElement("img");
-      img.src = image || 'https://via.placeholder.com/400x200?text=No+Image';
+      img.src = image;
       img.alt = title;
-      img.onerror = () => { 
+      img.onerror = () => {
         img.src = 'https://via.placeholder.com/400x200?text=No+Image';
       };
 
       const content = document.createElement("div");
       content.className = "card-content";
-
       content.innerHTML = `
         <h3>${title}</h3>
-        <p>${description || 'No description available.'}</p>
+        <p>${description}</p>
         <a href="${url}" target="_blank" rel="noopener noreferrer" class="read-more">Read More</a>
       `;
 
@@ -175,18 +176,16 @@
     }
 
     async function fetchNewsAndUpdate() {
+      const grid = document.getElementById("news-grid");
+      grid.innerHTML = "<p>Loading news...</p>";
+
       try {
         const response = await fetch(API_URL);
         const data = await response.json();
 
-        const grid = document.getElementById("news-grid");
-        grid.innerHTML = "";
-
-        if (data.data && data.data.length > 0) {
-          data.data.forEach(article => {
-            if (!seenHeadlines.has(article.title)) {
-              seenHeadlines.add(article.title);
-            }
+        if (data.results && data.results.length > 0) {
+          grid.innerHTML = "";
+          data.results.forEach(article => {
             const card = createNewsCard(article);
             grid.appendChild(card);
           });
@@ -195,7 +194,7 @@
         }
       } catch (error) {
         console.error("Error fetching news:", error);
-        document.getElementById("news-grid").innerHTML = "<p>Failed to load news.</p>";
+        grid.innerHTML = "<p>Failed to load news.</p>";
       }
     }
 
