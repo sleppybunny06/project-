@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Breaking News Alerts</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 40px;
+      background-color: #f7f7f7;
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 30px;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0 0 30px 0;
+      background-color: #333;
+      overflow: hidden;
+    }
+
+    li {
+      display: inline;
+    }
+
+    li a {
+      display: inline-block;
+      color: white;
+      text-align: center;
+      padding: 14px 20px;
+      text-decoration: none;
+    }
+
+    li a:hover {
+      background-color: #111;
+    }
+
+    #news-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .news-block {
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 20px;
+      width: 100%;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      display: flex;
+      gap: 20px;
+      text-align: left;
+    }
+
+    .news-image {
+      flex-shrink: 0;
+      width: 150px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    .news-content {
+      flex: 1;
+    }
+
+    .news-content h3 {
+      margin: 0 0 10px;
+      font-size: 1.2em;
+      color: #222;
+    }
+
+    .news-content p {
+      margin: 5px 0;
+      color: #555;
+    }
+
+    .news-content .meta {
+      font-size: 0.9em;
+      color: #888;
+    }
+
+    .news-content a {
+      display: inline-block;
+      margin-top: 10px;
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    .news-content a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Menu -->
+  <ul>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="news.html">News</a></li>
+    <li><a href="medical news.html">Medical</a></li>
+    <li><a href="debunk.html">Debunk Fake News</a></li>
+    <li><a href="alert.html">Alert</a></li>
+  </ul>
+
+  <h1>🔔 Live Breaking News Alerts</h1>
+
+  <!-- News Block Section -->
+  <div id="news-container"></div>
+
+  <script>
+    const API_KEY = "fe260dc48c57418a82c16967534922d5"; // Replace with your actual NewsAPI key
+    const POLL_INTERVAL = 30000; // 30 seconds
+    let seenHeadlines = new Set();
+
+    async function fetchBreakingNews() {
+      try {
+        const res = await fetch(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`);
+        const data = await res.json();
+
+        if (data.articles && data.articles.length > 0) {
+          data.articles.forEach(article => {
+            if (!seenHeadlines.has(article.title)) {
+              seenHeadlines.add(article.title);
+              // Toast notifications removed, so no call to showAlert here
+              addNewsBlock(article);
+            }
+          });
+        }
+      } catch (err) {
+        console.error("Error fetching news:", err);
+      }
+    }
+
+    function formatTime(dateStr) {
+      const date = new Date(dateStr);
+      return date.toLocaleString();
+    }
+
+    function addNewsBlock(article) {
+      const container = document.getElementById('news-container');
+      const block = document.createElement('div');
+      block.className = 'news-block';
+
+      block.innerHTML = `
+        ${article.urlToImage ? `<img src="${article.urlToImage}" class="news-image" alt="News Image">` : `<div class="news-image" style="background:#ddd;display:flex;align-items:center;justify-content:center;">No Image</div>`}
+        <div class="news-content">
+          <h3>${article.title}</h3>
+          ${article.description ? `<p>${article.description}</p>` : ''}
+          <p class="meta">🕒 ${formatTime(article.publishedAt)}</p>
+          <a href="${article.url}" target="_blank">🔗 Read Full Article</a>
+        </div>
+      `;
+      container.prepend(block); // Newest news on top
+    }
+
+    // Start polling
+    fetchBreakingNews(); // initial call
+    setInterval(fetchBreakingNews, POLL_INTERVAL);
+  </script>
+
+</body>
+</html>

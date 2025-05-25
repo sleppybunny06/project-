@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Global Health News & Information</title>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f7f9fc; color: #222; line-height: 1.6;
+      min-height: 100vh; display: flex; flex-direction: column;
+    }
+    a { text-decoration: none; color: #0078d7; transition: color 0.3s ease; }
+    a:hover { color: #005ea2; }
+    header {
+      background: #005ea2; color: white; padding: 1rem 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
+    }
+    .logo { font-size: 1.6rem; font-weight: 700; letter-spacing: 2px; font-family: 'Georgia', serif; }
+    nav ul {
+      display: flex; gap: 1.5rem; flex-wrap: wrap; list-style: none;
+    }
+    nav ul li a {
+      font-weight: 600; font-size: 1rem; padding: 0.5rem 0; color: white;
+    }
+    main {
+      flex: 1; max-width: 1200px; margin: 2rem auto 4rem; padding: 0 1rem; width: 100%;
+    }
+    .hero {
+      background: linear-gradient(135deg, #0078d7 0%, #00aaff 100%);
+      color: white; border-radius: 12px; padding: 3rem 2rem; text-align: center;
+      margin-bottom: 3rem; position: relative; overflow: hidden;
+      box-shadow: 0 10px 30px rgb(0 123 255 / 0.4);
+    }
+    .hero h1 {
+      font-size: 2.8rem; font-weight: 900; max-width: 700px;
+      margin: 0 auto 1rem; line-height: 1.2;
+      text-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    }
+    .hero p {
+      font-size: 1.25rem; max-width: 600px; margin: 0 auto 2rem;
+      font-weight: 600; text-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+    }
+    .hero::after {
+      content: ""; position: absolute; right: -80px; bottom: -20px;
+      width: 300px; height: 300px;
+      background: url('https://images.unsplash.com/photo-1576765607923-d88fc4984a88?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80') no-repeat center/cover;
+      border-radius: 50%; opacity: 0.35;
+      filter: grayscale(40%) brightness(80%);
+      pointer-events: none;
+    }
+    section { margin-bottom: 3rem; }
+    section h2 {
+      font-size: 2rem; font-weight: 700; border-bottom: 3px solid #0078d7;
+      padding-bottom: 0.3rem; margin-bottom: 1.5rem; color: #005288;
+    }
+    .articles-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.8rem;
+    }
+    article.card {
+      background: white; border-radius: 10px;
+      box-shadow: 0 4px 12px rgb(0 0 0 / 0.07);
+      display: flex; flex-direction: column; overflow: hidden;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    article.card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 8px 20px rgb(0 0 0 / 0.15);
+    }
+    article.card img {
+      width: 100%; height: 160px; object-fit: cover;
+      border-bottom: 1px solid #ddd; flex-shrink: 0;
+    }
+    article.card-content {
+      padding: 1.2rem 1rem; flex: 1; display: flex; flex-direction: column;
+    }
+    article.card-content h3 {
+      font-size: 1.1rem; font-weight: 700; margin-bottom: 0.6rem;
+      color: #00345b; flex-grow: 1;
+    }
+    article.card-content p {
+      font-size: 0.95rem; color: #444;
+      margin-bottom: 1rem; flex-grow: 1;
+    }
+    article.card-content a.read-more {
+      align-self: flex-start;
+      padding: 0.4rem 0.8rem; background: #0078d7; color: white;
+      font-weight: 600; border-radius: 5px;
+      box-shadow: 0 3px 8px rgb(0 123 255 / 0.4);
+      transition: background-color 0.3s ease;
+    }
+    article.card-content a.read-more:hover { background: #005ea2; }
+    footer {
+      background: #002d5b; color: #cbd8e8;
+      padding: 2rem 1.5rem; text-align: center; font-size: 0.9rem;
+      margin-top: auto;
+    }
+    @media (max-width: 600px) {
+      .hero h1 { font-size: 2rem; }
+      .hero p { font-size: 1rem; }
+      header { flex-direction: column; align-items: flex-start; }
+      nav ul { width: 100%; justify-content: space-around; margin-top: 0.7rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">GHNI</div>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="news.html">News</a></li>
+        <li><a href="medical news.html">Medical</a></li>
+        <li><a href="debunk.html">Debunk</a></li>
+        <li><a href="alert.html">Alert</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>Your Trusted Source for Global Health News & Information</h1>
+      <p>Up-to-date, accurate, and reliable news and health advice from around the world.</p>
+    </section>
+
+    <section>
+      <h2>Featured News</h2>
+      <div class="articles-grid" id="news-grid">
+        <p>Loading news...</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 Global Health News & Information. All Rights Reserved.</p>
+  </footer>
+
+  <script>
+    const API_KEY = 'bd7d39ec16e59690b05ffb4b61352dd6'; // Your Mediastack API key
+    const API_URL = `http://api.mediastack.com/v1/news?access_key=${API_KEY}&categories=health&languages=en&limit=6`;
+    const seenHeadlines = new Set();
+
+    function createNewsCard(article) {
+      const { title, description, url, image } = article;
+      const card = document.createElement("article");
+      card.className = "card";
+      card.tabIndex = 0;
+      card.setAttribute("aria-label", `Article: ${title}`);
+
+      // Create the image element with fallback on error
+      const img = document.createElement("img");
+      img.src = image || 'https://via.placeholder.com/400x200?text=No+Image';
+      img.alt = title;
+      img.onerror = () => { 
+        img.src = 'https://via.placeholder.com/400x200?text=No+Image';
+      };
+
+      const content = document.createElement("div");
+      content.className = "card-content";
+
+      content.innerHTML = `
+        <h3>${title}</h3>
+        <p>${description || 'No description available.'}</p>
+        <a href="${url}" target="_blank" rel="noopener noreferrer" class="read-more">Read More</a>
+      `;
+
+      card.appendChild(img);
+      card.appendChild(content);
+
+      return card;
+    }
+
+    async function fetchNewsAndUpdate() {
+      try {
+        const response = await fetch(API_URL);
+        const data = await response.json();
+
+        const grid = document.getElementById("news-grid");
+        grid.innerHTML = "";
+
+        if (data.data && data.data.length > 0) {
+          data.data.forEach(article => {
+            if (!seenHeadlines.has(article.title)) {
+              seenHeadlines.add(article.title);
+            }
+            const card = createNewsCard(article);
+            grid.appendChild(card);
+          });
+        } else {
+          grid.innerHTML = "<p>No news articles found.</p>";
+        }
+      } catch (error) {
+        console.error("Error fetching news:", error);
+        document.getElementById("news-grid").innerHTML = "<p>Failed to load news.</p>";
+      }
+    }
+
+    // Initial fetch
+    fetchNewsAndUpdate();
+
+    // Refresh every 60 seconds
+    setInterval(fetchNewsAndUpdate, 60000);
+  </script>
+</body>
+</html>

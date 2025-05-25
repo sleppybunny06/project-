@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Debunk News - True Alert</title>
+  <style>
+    :root {
+      --bg-color: #f4f7fa;
+      --card-bg: #fff;
+      --text-color: #333;
+      --false-color: #dc3545;
+      --true-color: #28a745;
+      --misleading-color: #ffc107;
+      --unverified-color: #6c757d;
+      --link-color: #007bff;
+      --tag-bg: #e1ecf4;
+      --tag-text: #0366d6;
+    }
+    body.dark {
+      --bg-color: #121212;
+      --card-bg: #1e1e1e;
+      --text-color: #eee;
+      --link-color: #66b3ff;
+      --tag-bg: #2a2f4a;
+      --tag-text: #aad1ff;
+    }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg-color);
+      padding: 2rem;
+      color: var(--text-color);
+      transition: background 0.3s, color 0.3s;
+      margin: 0;
+      min-height: 100vh;
+    }
+    header {
+      background: var(--card-bg);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    header h1 {
+      margin: 0;
+      font-weight: bold;
+      color: var(--true-color);
+      font-size: 1.8rem;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 1.5rem;
+      padding: 0;
+      margin: 0;
+      flex-wrap: wrap;
+    }
+    nav a {
+      text-decoration: none;
+      color: var(--text-color);
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    nav a:hover {
+      color: var(--true-color);
+    }
+    .search-bar {
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      margin-left: 1rem;
+      max-width: 200px;
+    }
+    .toggle-btn {
+      background: var(--true-color);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      font-weight: 600;
+      margin-left: 1rem;
+      user-select: none;
+      transition: background 0.3s;
+    }
+    .toggle-btn:hover {
+      background: #1f7a31;
+    }
+    main {
+      max-width: 1200px;
+      margin: 2rem auto 4rem auto;
+    }
+    h2 {
+      margin-top: 0;
+      color: var(--true-color);
+      border-bottom: 2px solid var(--true-color);
+      padding-bottom: 0.25rem;
+      margin-bottom: 1rem;
+    }
+    .debunk-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      padding: 1.5rem;
+      margin-bottom: 1.8rem;
+      border-left: 6px solid var(--false-color);
+      transition: 0.3s;
+      cursor: default;
+    }
+    .debunk-card.true { border-left-color: var(--true-color); }
+    .debunk-card.misleading { border-left-color: var(--misleading-color); }
+    .debunk-card.unverified { border-left-color: var(--unverified-color); }
+
+    .claim {
+      font-size: 1.3rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+    .verdict {
+      font-size: 1rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+    .verdict.false { color: var(--false-color); }
+    .verdict.true { color: var(--true-color); }
+    .verdict.misleading { color: var(--misleading-color); }
+    .verdict.unverified { color: var(--unverified-color); }
+
+    .summary {
+      margin-bottom: 1rem;
+    }
+    .meta {
+      font-size: 0.9rem;
+      margin-bottom: 0.4rem;
+    }
+    .meta a {
+      color: var(--link-color);
+      text-decoration: none;
+    }
+    .meta a:hover {
+      text-decoration: underline;
+    }
+    .tags {
+      margin-top: 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .tag {
+      background: var(--tag-bg);
+      color: var(--tag-text);
+      padding: 0.3rem 0.6rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+    }
+    .action {
+      margin-top: 1rem;
+      font-style: italic;
+    }
+    .loading {
+      text-align: center;
+      font-size: 1.2rem;
+      color: var(--unverified-color);
+      padding: 2rem 0;
+    }
+    .error {
+      color: var(--false-color);
+      text-align: center;
+      font-weight: bold;
+      padding: 1rem 0;
+    }
+    @media (max-width: 700px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+      nav ul {
+        gap: 1rem;
+      }
+      .search-bar {
+        margin-left: 0;
+        width: 100%;
+        max-width: none;
+      }
+      .toggle-btn {
+        margin-left: 0;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>True Alert</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html" class="hover:text-teal-600 dark:hover:text-teal-400">Home</a></li>
+        <li><a href="news.html" class="hover:text-teal-600 dark:hover:text-teal-400">News</a></li>
+        <li><a href="medical news.html" class="hover:text-teal-600 dark:hover:text-teal-400">Medical</a></li>
+        <li><a href="debunk.html" class="hover:text-teal-600 dark:hover:text-teal-400">Debunk</a></li>
+        <li><a href="alert.html" class="hover:text-teal-600 dark:hover:text-teal-400">Alert</a></li>
+      </ul>
+    </nav>
+    <input class="search-bar" type="text" id="searchInput" placeholder="Search claims..." aria-label="Search claims" />
+    <button class="toggle-btn" id="toggleDarkBtn" aria-pressed="false">🌙 Dark Mode</button>
+  </header>
+
+  <main>
+    <section id="featured-debunk">
+      <h2>🔥 Featured Debunk</h2>
+      <div id="featured-card" class="debunk-card false"></div>
+    </section>
+
+    <section id="recent-debunks">
+      <h2>🧠 Recent Debunked Claims</h2>
+      <div id="debunk-container"></div>
+    </section>
+
+    <section id="trending-debunks-section">
+      <h2>🚀 Trending Debunk News</h2>
+      <div id="trending-loading" class="loading">Loading trending debunk news...</div>
+      <div id="trending-error" class="error" style="display:none;"></div>
+      <div id="trending-container"></div>
+    </section>
+  </main>
+
+  <script>
+    const apiKey = 'pub_71cb026885c14512b1f7b2d214233a3b'; // 🔁 Replace with your Newsdata.io API key
+
+    const staticData = [
+      {
+        claim: "Drinking warm water kills COVID-19.",
+        verdict: "false",
+        summary: "WHO confirms that drinking warm water does not kill the coronavirus. There is no scientific evidence supporting this claim.",
+        source: "https://www.who.int",
+        verifiedBy: "WHO Fact Check Team",
+        date: "May 2025",
+        origin: "Viral Facebook Post",
+        impact: "🔺 Over 100K shares on Facebook",
+        tags: ["Health", "COVID-19", "Social Media"],
+        action: "💡 Tip: Think before sharing. Learn how to verify sources."
+      },
+      {
+        claim: "Wearing masks reduces oxygen levels dangerously.",
+        verdict: "misleading",
+        summary: "While masks may feel uncomfortable, studies show they do not significantly reduce oxygen intake for most people.",
+        source: "https://www.cdc.gov",
+        verifiedBy: "CDC Medical Review Team",
+        date: "April 2025",
+        origin: "WhatsApp Forward",
+        impact: "🔺 Circulating in 20+ countries",
+        tags: ["Health", "Masks", "COVID-19"],
+        action: "💡 Tip: Check scientific consensus before believing claims."
+      }
+    ];
+
+    function createDebunkCard(data) {
+      const card = document.createElement("div");
+      card.className = `debunk-card ${data.verdict}`;
+      card.innerHTML = `
+        <div class="claim">${data.claim}</div>
+        <div class="verdict ${data.verdict}">Verdict: ${data.verdict.toUpperCase()}</div>
+        <div class="summary">${data.summary}</div>
+        <div class="meta">Source: <a href="${data.source}" target="_blank">${data.source}</a></div>
+        <div class="meta">Verified by: ${data.verifiedBy} | Date: ${data.date}</div>
+        <div class="meta">Origin: ${data.origin}</div>
+        <div class="meta">Impact: ${data.impact}</div>
+        <div class="tags">${data.tags.map(tag => `<span class="tag">${tag}</span>`).join("")}</div>
+        <div class="action">${data.action}</div>
+      `;
+      return card;
+    }
+
+    function renderFeaturedDebunk() {
+      const featured = document.getElementById("featured-card");
+      featured.innerHTML = "";
+      const featuredData = staticData[0];
+      featured.className = `debunk-card ${featuredData.verdict}`;
+      featured.appendChild(createDebunkCard(featuredData));
+    }
+
+    function renderDebunks(data) {
+      const container = document.getElementById("debunk-container");
+      container.innerHTML = "";
+      data.forEach(debunk => {
+        container.appendChild(createDebunkCard(debunk));
+      });
+    }
+
+    function handleSearch() {
+      const query = document.getElementById("searchInput").value.toLowerCase();
+      const filtered = staticData.filter(item =>
+        item.claim.toLowerCase().includes(query) ||
+        item.summary.toLowerCase().includes(query) ||
+        item.tags.join(" ").toLowerCase().includes(query)
+      );
+      renderDebunks(filtered);
+    }
+
+    function fetchTrendingDebunks() {
+      const url = `https://newsdata.io/api/1/news?apikey=${apiKey}&q=fake%20news&language=en&category=health,science,technology`;
+      const trendingContainer = document.getElementById("trending-container");
+      const loading = document.getElementById("trending-loading");
+      const error = document.getElementById("trending-error");
+
+      fetch(url)
+        .then(res => res.json())
+        .then(data => {
+          loading.style.display = "none";
+          if (data && data.results && data.results.length > 0) {
+            data.results.slice(0, 5).forEach(article => {
+              const card = document.createElement("div");
+              card.className = "debunk-card unverified";
+              card.innerHTML = `
+                <div class="claim">${article.title}</div>
+                <div class="verdict unverified">Verdict: UNVERIFIED</div>
+                <div class="summary">${article.description || "No summary available."}</div>
+                <div class="meta">Source: <a href="${article.link}" target="_blank">${article.source_id || "Source"}</a></div>
+                <div class="meta">Date: ${new Date(article.pubDate).toLocaleDateString()}</div>
+              `;
+              trendingContainer.appendChild(card);
+            });
+          } else {
+            error.textContent = "No trending debunks found.";
+            error.style.display = "block";
+          }
+        })
+        .catch(err => {
+          loading.style.display = "none";
+          error.textContent = "Failed to load trending debunk news.";
+          error.style.display = "block";
+        });
+    }
+
+    document.getElementById("searchInput").addEventListener("input", handleSearch);
+    document.getElementById("toggleDarkBtn").addEventListener("click", () => {
+      document.body.classList.toggle("dark");
+    });
+
+    renderFeaturedDebunk();
+    renderDebunks(staticData);
+    fetchTrendingDebunks();
+  </script>
+</body>
+</html>
