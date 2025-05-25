@@ -141,7 +141,8 @@
 
   <script>
     const API_KEY = 'pub_80e03d38b2ea494298c400eedc9c17fa'; // Your NewsData.io API key
-    const API_URL = `https://newsdata.io/api/1/news?apikey=${API_KEY}&country=in&category=health&language=en&limit=6`;
+    // Removed country=in filter temporarily for mobile testing
+    const API_URL = `https://newsdata.io/api/1/news?apikey=${API_KEY}&category=health&language=en&limit=6`;
 
     function createNewsCard(article) {
       const title = article.title || "No title";
@@ -181,7 +182,15 @@
 
       try {
         const response = await fetch(API_URL);
+
+        if (!response.ok) {
+          grid.innerHTML = `<p>API error: ${response.status} ${response.statusText}</p>`;
+          console.error(`API Error: ${response.status} ${response.statusText}`);
+          return;
+        }
+
         const data = await response.json();
+        console.log('API data:', data);
 
         if (data.results && data.results.length > 0) {
           grid.innerHTML = "";
@@ -206,3 +215,4 @@
   </script>
 </body>
 </html>
+
