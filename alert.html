@@ -2,100 +2,109 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Breaking News Alerts - Health News India</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       text-align: center;
       padding: 40px;
-      background-color: #f7f7f7;
+      background: #f7f7f7;
       margin: 0;
     }
+
     ul {
-      list-style-type: none;
-      padding: 0;
-      margin: 0 0 30px 0;
-      background-color: #333;
-      overflow: hidden;
+      list-style: none;
       display: flex;
       justify-content: center;
       gap: 1rem;
+      padding: 0;
+      margin-bottom: 30px;
+      background: #333;
       flex-wrap: wrap;
     }
-    li {
-      display: inline;
-    }
+
     li a {
-      display: inline-block;
       color: white;
-      text-align: center;
       padding: 14px 20px;
       text-decoration: none;
-      font-weight: 600;
+      font-weight: bold;
+      display: inline-block;
     }
+
     li a:hover {
-      background-color: #111;
+      background: #111;
     }
+
     h1 {
       color: #333;
       margin-bottom: 30px;
     }
+
     #news-container {
+      max-width: 900px;
+      margin: auto;
       display: flex;
       flex-direction: column;
-      align-items: center;
       gap: 20px;
-      max-width: 900px;
-      margin: 0 auto;
+      align-items: center;
     }
+
     .news-block {
-      background-color: #fff;
-      border: 1px solid #ccc;
-      border-radius: 10px;
+      background: white;
       padding: 20px;
       width: 100%;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      border: 1px solid #ccc;
       display: flex;
-      gap: 20px;
-      text-align: left;
       align-items: center;
+      gap: 20px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
+
     .news-image {
       flex-shrink: 0;
       width: 150px;
       height: 100px;
-      object-fit: cover;
-      border-radius: 8px;
       background: #ddd;
+      border-radius: 8px;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
       color: #555;
       font-size: 0.9em;
+      object-fit: cover;
     }
+
     .news-content {
       flex: 1;
+      text-align: left;
     }
+
     .news-content h3 {
       margin: 0 0 10px;
       font-size: 1.2em;
       color: #222;
     }
+
     .news-content p {
       margin: 5px 0;
       color: #555;
     }
-    .news-content .meta {
-      font-size: 0.9em;
+
+    .meta {
       color: #888;
+      font-size: 0.9em;
     }
+
     .news-content a {
-      display: inline-block;
       margin-top: 10px;
+      display: inline-block;
       color: #007bff;
+      font-weight: bold;
       text-decoration: none;
-      font-weight: 600;
     }
+
     .news-content a:hover {
       text-decoration: underline;
     }
@@ -103,7 +112,6 @@
 </head>
 <body>
 
-  <!-- Navigation Menu -->
   <ul>
     <li><a href="index.html">Home</a></li>
     <li><a href="news.html">News</a></li>
@@ -114,92 +122,84 @@
 
   <h1>🔔 Live Breaking Health News - India</h1>
 
-  <!-- News Block Section -->
   <div id="news-container">
     <p>Loading news...</p>
   </div>
 
   <script>
-    const API_KEY = 'pub_80e03d38b2ea494298c400eedc9c17fa'; // Your NewsData.io API key
-    const COUNTRY = 'in';
-    const CATEGORY = 'health';
-    const LANGUAGE = 'en';
-    const POLL_INTERVAL = 30000; // 30 seconds
+    const API_KEY = 'a218c46808d0273e1b040b818fab8a2b'; // Replace this with your actual GNews API key
+    const seen = new Set();
+    const urlParams = {
+      country: 'in',
+      lang: 'en',
+      topic: 'health',
+      max: 10
+    };
+    const POLL = 30000;
 
-    let seenTitles = new Set();
+    function buildUrl() {
+      const base = 'https://gnews.io/api/v4/top-headlines';
+      const params = new URLSearchParams({ token: API_KEY, ...urlParams });
+      return `${base}?${params}`;
+    }
 
-    async function fetchNewsData() {
-      const url = `https://newsdata.io/api/1/news?apikey=${API_KEY}&country=${COUNTRY}&category=${CATEGORY}&language=${LANGUAGE}&page=1&limit=10`;
+    async function loadNews() {
       try {
-        const response = await fetch(url);
-        const data = await response.json();
+        const res = await fetch(buildUrl());
+        if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+        const json = await res.json();
 
-        if (data.status === 'error') {
-          throw new Error(data.message || 'API error');
-        }
-        if (!data.results || data.results.length === 0) {
-          document.getElementById('news-container').innerHTML = "<p>No news found.</p>";
-          return;
+        if (!json.articles || !Array.isArray(json.articles)) {
+          throw new Error('Unexpected data format');
         }
 
-        // Filter out already seen articles by title
-        const newArticles = data.results.filter(article => !seenTitles.has(article.title));
-
-        if (newArticles.length === 0) {
-          // No new articles
-          return;
-        }
+        const fresh = json.articles.filter(a => !seen.has(a.title));
+        if (!fresh.length) return;
 
         const container = document.getElementById('news-container');
-        // Clear initial loading message if first fetch
-        if (container.querySelector('p')?.textContent.includes('Loading')) {
-          container.innerHTML = '';
-        }
+        if (container.innerText.includes('Loading')) container.innerHTML = '';
 
-        newArticles.forEach(article => {
-          seenTitles.add(article.title);
-          addNewsBlock(article);
+        fresh.forEach(article => {
+          seen.add(article.title);
+          addArticle(article);
         });
-      } catch (error) {
-        console.error('Error fetching news:', error);
-        document.getElementById('news-container').innerHTML = `<p style="color:red;">Failed to load news: ${error.message}</p>`;
+      } catch (e) {
+        console.warn('News fetch error:', e);
+        document.getElementById('news-container').innerHTML =
+          `<p style="color:red;">Could not fetch news: ${e.message}</p>`;
       }
     }
 
-    function formatDate(dateStr) {
-      if (!dateStr) return '';
-      const date = new Date(dateStr);
-      return date.toLocaleString();
+    function formatDate(date) {
+      return date ? new Date(date).toLocaleString() : '';
     }
 
-    function addNewsBlock(article) {
-      const container = document.getElementById('news-container');
-      const block = document.createElement('div');
-      block.className = 'news-block';
+    function addArticle(article) {
+      const box = document.createElement('div');
+      box.className = 'news-block';
 
-      const imageUrl = article.image_url || '';
-      block.innerHTML = `
-        ${imageUrl
-          ? `<img src="${imageUrl}" alt="News Image" class="news-image" onerror="this.src='https://via.placeholder.com/150x100?text=No+Image';" />`
-          : `<div class="news-image">No Image</div>`
-        }
+      const imgSrc = article.image || '';
+      const imageHTML = imgSrc
+        ? `<img src="${imgSrc}" alt="News" class="news-image" onerror="this.src='https://via.placeholder.com/150x100?text=No+Image';">`
+        : `<div class="news-image">No Image</div>`;
+
+      const html = `
+        ${imageHTML}
         <div class="news-content">
-          <h3>${article.title || 'No title'}</h3>
+          <h3>${article.title || 'No Title'}</h3>
           ${article.description ? `<p>${article.description}</p>` : ''}
-          <p class="meta">🕒 ${formatDate(article.pubDate)}</p>
-          <a href="${article.link || '#'}" target="_blank" rel="noopener noreferrer">🔗 Read Full Article</a>
+          <p class="meta">🕒 ${formatDate(article.publishedAt)}</p>
+          <a href="${article.url || '#'}" target="_blank" rel="noopener noreferrer">🔗 Full Article</a>
         </div>
       `;
-      // prepend so newest news appears on top
-      container.prepend(block);
+
+      box.innerHTML = html;
+      document.getElementById('news-container').prepend(box);
     }
 
-    // Initial fetch
-    fetchNewsData();
-
-    // Poll every 30 seconds
-    setInterval(fetchNewsData, POLL_INTERVAL);
+    loadNews();
+    setInterval(loadNews, POLL);
   </script>
-
 </body>
 </html>
+
