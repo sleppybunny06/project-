@@ -6,7 +6,6 @@
   <title>Global Health News & Information</title>
 
   <style>
-    /* ... your existing CSS ... */
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -142,7 +141,7 @@
 
   <script>
     const API_KEY = 'pub_80e03d38b2ea494298c400eedc9c17fa'; // Your NewsData.io API key
-    const API_URL = `https://newsdata.io/api/1/news?apikey=${API_KEY}&category=health&language=en&limit=6`;
+    const API_URL = `https://newsdata.io/api/1/news?apikey=${API_KEY}&country=in&category=health&language=en&limit=6`;
 
     function createNewsCard(article) {
       const title = article.title || "No title";
@@ -182,15 +181,12 @@
 
       try {
         const response = await fetch(API_URL);
-
-        if (!response.ok) {
-          grid.innerHTML = `<p>API error: ${response.status} ${response.statusText}</p>`;
-          console.error(`API Error: ${response.status} ${response.statusText}`);
-          return;
-        }
-
         const data = await response.json();
-        console.log('API data:', data);
+
+        // Handle error status in response
+        if (data.status === 'error') {
+          throw new Error(data.message || 'Unknown API error');
+        }
 
         if (data.results && data.results.length > 0) {
           grid.innerHTML = "";
@@ -203,11 +199,14 @@
         }
       } catch (error) {
         console.error("Error fetching news:", error);
-        grid.innerHTML = "<p>Failed to load news.</p>";
+        grid.innerHTML = `<p>Failed to load news: ${error.message}</p>`;
       }
     }
 
+    // Initial fetch
     fetchNewsAndUpdate();
+
+    // Refresh every 60 seconds
     setInterval(fetchNewsAndUpdate, 60000);
   </script>
 </body>
