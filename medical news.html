@@ -2,214 +2,184 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Global Health News & Information</title>
-
+  <title>Health Alerts - News India</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f7f9fc; color: #222; line-height: 1.6;
-      min-height: 100vh; display: flex; flex-direction: column;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
     }
-    a { text-decoration: none; color: #0078d7; transition: color 0.3s ease; }
-    a:hover { color: #005ea2; }
-    header {
-      background: #005ea2; color: white; padding: 1rem 2rem;
-      display: flex; align-items: center; justify-content: space-between;
-      flex-wrap: wrap; box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
+
+    ul {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      list-style: none;
+      background-color: #333;
+      margin: 0 0 30px 0;
+      padding: 0;
     }
-    .logo { font-size: 1.6rem; font-weight: 700; letter-spacing: 2px; font-family: 'Georgia', serif; }
-    nav ul {
-      display: flex; gap: 1.5rem; flex-wrap: wrap; list-style: none;
+
+    li a {
+      display: block;
+      padding: 14px 20px;
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
     }
-    nav ul li a {
-      font-weight: 600; font-size: 1rem; padding: 0.5rem 0; color: white;
+
+    li a:hover {
+      background-color: #111;
     }
-    main {
-      flex: 1; max-width: 1200px; margin: 2rem auto 4rem; padding: 0 1rem; width: 100%;
+
+    h1 {
+      text-align: center;
+      color: #222;
+      margin-bottom: 20px;
     }
-    .hero {
-      background: linear-gradient(135deg, #0078d7 0%, #00aaff 100%);
-      color: white; border-radius: 12px; padding: 3rem 2rem; text-align: center;
-      margin-bottom: 3rem; position: relative; overflow: hidden;
-      box-shadow: 0 10px 30px rgb(0 123 255 / 0.4);
+
+    #news-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
     }
-    .hero h1 {
-      font-size: 2.8rem; font-weight: 900; max-width: 700px;
-      margin: 0 auto 1rem; line-height: 1.2;
-      text-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+
+    .news-card {
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      overflow: hidden;
     }
-    .hero p {
-      font-size: 1.25rem; max-width: 600px; margin: 0 auto 2rem;
-      font-weight: 600; text-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+
+    .news-card img {
+      width: 100%;
+      height: auto;
+      object-fit: cover;
     }
-    .hero::after {
-      content: ""; position: absolute; right: -80px; bottom: -20px;
-      width: 300px; height: 300px;
-      background: url('https://images.unsplash.com/photo-1576765607923-d88fc4984a88?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80') no-repeat center/cover;
-      border-radius: 50%; opacity: 0.35;
-      filter: grayscale(40%) brightness(80%);
-      pointer-events: none;
+
+    .news-content {
+      padding: 15px;
+      text-align: left;
     }
-    section { margin-bottom: 3rem; }
-    section h2 {
-      font-size: 2rem; font-weight: 700; border-bottom: 3px solid #0078d7;
-      padding-bottom: 0.3rem; margin-bottom: 1.5rem; color: #005288;
+
+    .news-content h3 {
+      margin: 0 0 10px;
+      font-size: 1.2em;
     }
-    .articles-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.8rem;
+
+    .news-content p {
+      margin: 8px 0;
+      color: #444;
     }
-    article.card {
-      background: white; border-radius: 10px;
-      box-shadow: 0 4px 12px rgb(0 0 0 / 0.07);
-      display: flex; flex-direction: column; overflow: hidden;
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+    .meta {
+      font-size: 0.9em;
+      color: #888;
     }
-    article.card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 8px 20px rgb(0 0 0 / 0.15);
+
+    .news-content a {
+      display: inline-block;
+      margin-top: 10px;
+      color: #007bff;
+      text-decoration: none;
     }
-    article.card img {
-      width: 100%; height: 160px; object-fit: cover;
-      border-bottom: 1px solid #ddd; flex-shrink: 0;
+
+    .news-content a:hover {
+      text-decoration: underline;
     }
-    article.card-content {
-      padding: 1.2rem 1rem; flex: 1; display: flex; flex-direction: column;
-    }
-    article.card-content h3 {
-      font-size: 1.1rem; font-weight: 700; margin-bottom: 0.6rem;
-      color: #00345b; flex-grow: 1;
-    }
-    article.card-content p {
-      font-size: 0.95rem; color: #444;
-      margin-bottom: 1rem; flex-grow: 1;
-    }
-    article.card-content a.read-more {
-      align-self: flex-start;
-      padding: 0.4rem 0.8rem; background: #0078d7; color: white;
-      font-weight: 600; border-radius: 5px;
-      box-shadow: 0 3px 8px rgb(0 123 255 / 0.4);
-      transition: background-color 0.3s ease;
-    }
-    article.card-content a.read-more:hover { background: #005ea2; }
-    footer {
-      background: #002d5b; color: #cbd8e8;
-      padding: 2rem 1.5rem; text-align: center; font-size: 0.9rem;
-      margin-top: auto;
-    }
-    @media (max-width: 600px) {
-      .hero h1 { font-size: 2rem; }
-      .hero p { font-size: 1rem; }
-      header { flex-direction: column; align-items: flex-start; }
-      nav ul { width: 100%; justify-content: space-around; margin-top: 0.7rem; }
+
+    @media (min-width: 700px) {
+      .news-card {
+        flex-direction: row;
+      }
+
+      .news-card img {
+        width: 250px;
+        height: 150px;
+      }
+
+      .news-content {
+        flex: 1;
+      }
     }
   </style>
 </head>
 <body>
-  <header>
-    <div class="logo">GHNI</div>
-    <nav>
-      <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="news.html">News</a></li>
-        <li><a href="medical news.html">Medical</a></li>
-        <li><a href="debunk.html">Debunk</a></li>
-        <li><a href="alert.html">Alert</a></li>
-      </ul>
-    </nav>
-  </header>
 
-  <main>
-    <section class="hero">
-      <h1>Your Trusted Source for Global Health News & Information</h1>
-      <p>Up-to-date, accurate, and reliable news and health advice from around the world.</p>
-    </section>
+  <!-- Navigation -->
+  <ul>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="news.html">News</a></li>
+    <li><a href="medical news.html">Medical</a></li>
+    <li><a href="debunk.html">Debunk Fake News</a></li>
+    <li><a href="alert.html">Alert</a></li>
+  </ul>
 
-    <section>
-      <h2>Featured News</h2>
-      <div class="articles-grid" id="news-grid">
-        <p>Loading news...</p>
-      </div>
-    </section>
-  </main>
+  <h1>🩺 Real-Time Health News Updates from India</h1>
 
-  <footer>
-    <p>© 2025 Global Health News & Information. All Rights Reserved.</p>
-  </footer>
+  <div id="news-container">
+    <p>Fetching health headlines for you...</p>
+  </div>
 
   <script>
-    const API_KEY = 'pub_80e03d38b2ea494298c400eedc9c17fa'; // Your NewsData.io API key
-    const API_URL = `https://newsdata.io/api/1/news?apikey=${API_KEY}&country=in&category=health&language=en&limit=6`;
+    const API_KEY = 'b34413b6ac170b333793e4fc1e103e42'; // Replace with your GNews.io API key
+    const BASE_URL = `https://gnews.io/api/v4/search?q=health&country=in&lang=en&token=${API_KEY}`;
+    const seenArticles = new Set();
 
-    function createNewsCard(article) {
-      const title = article.title || "No title";
-      const description = article.description || "No description available.";
-      const url = article.link || "#";
-      const image = article.image_url || 'https://via.placeholder.com/400x200?text=No+Image';
-
-      const card = document.createElement("article");
-      card.className = "card";
-      card.tabIndex = 0;
-      card.setAttribute("aria-label", `Article: ${title}`);
-
-      const img = document.createElement("img");
-      img.src = image;
-      img.alt = title;
-      img.onerror = () => {
-        img.src = 'https://via.placeholder.com/400x200?text=No+Image';
-      };
-
-      const content = document.createElement("div");
-      content.className = "card-content";
-      content.innerHTML = `
-        <h3>${title}</h3>
-        <p>${description}</p>
-        <a href="${url}" target="_blank" rel="noopener noreferrer" class="read-more">Read More</a>
-      `;
-
-      card.appendChild(img);
-      card.appendChild(content);
-
-      return card;
-    }
-
-    async function fetchNewsAndUpdate() {
-      const grid = document.getElementById("news-grid");
-      grid.innerHTML = "<p>Loading news...</p>";
-
+    async function fetchHealthNews() {
       try {
-        const response = await fetch(API_URL);
-        const data = await response.json();
+        const res = await fetch(BASE_URL);
+        const data = await res.json();
 
-        // Handle error status in response
-        if (data.status === 'error') {
-          throw new Error(data.message || 'Unknown API error');
+        if (!data.articles || data.articles.length === 0) {
+          document.getElementById('news-container').innerHTML = "<p>No recent health stories available.</p>";
+          return;
         }
 
-        if (data.results && data.results.length > 0) {
-          grid.innerHTML = "";
-          data.results.forEach(article => {
-            const card = createNewsCard(article);
-            grid.appendChild(card);
-          });
-        } else {
-          grid.innerHTML = "<p>No news articles found.</p>";
-        }
-      } catch (error) {
-        console.error("Error fetching news:", error);
-        grid.innerHTML = `<p>Failed to load news: ${error.message}</p>`;
+        const newArticles = data.articles.filter(article => !seenArticles.has(article.title));
+
+        if (newArticles.length === 0) return;
+
+        const container = document.getElementById('news-container');
+        if (container.querySelector('p')) container.innerHTML = ''; // clear loading msg
+
+        newArticles.forEach(article => {
+          seenArticles.add(article.title);
+          const card = document.createElement('div');
+          card.className = 'news-card';
+
+          const image = article.image ? article.image : 'https://via.placeholder.com/250x150?text=No+Image';
+          const date = new Date(article.publishedAt).toLocaleString();
+
+          card.innerHTML = `
+            <img src="${image}" alt="News image" onerror="this.src='https://via.placeholder.com/250x150?text=No+Image';">
+            <div class="news-content">
+              <h3>${article.title}</h3>
+              ${article.description ? `<p>${article.description}</p>` : ''}
+              <p class="meta">📅 ${date}</p>
+              <a href="${article.url}" target="_blank">🔗 Read full article</a>
+            </div>
+          `;
+
+          container.prepend(card);
+        });
+
+      } catch (err) {
+        console.error(err);
+        document.getElementById('news-container').innerHTML = `<p style="color:red;">Couldn't load news. Try again later.</p>`;
       }
     }
 
-    // Initial fetch
-    fetchNewsAndUpdate();
-
-    // Refresh every 60 seconds
-    setInterval(fetchNewsAndUpdate, 60000);
+    fetchHealthNews();
+    setInterval(fetchHealthNews, 60000); // Refresh every 1 minute
   </script>
+
 </body>
 </html>
-
 
