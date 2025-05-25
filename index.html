@@ -74,18 +74,88 @@
 
   <!-- Script -->
   <script>
-    const API_KEY = 'bd7d39ec16e59690b05ffb4b61352dd6'; // Replace with your Mediastack API key
-    const API_URL = `http://api.mediastack.com/v1/news?access_key=${API_KEY}&categories=health&languages=en&limit=8`;
+    const apiKey = 'pub_80e03d38b2ea494298c400eedc9c17fa'; // Your NewsData.io API key
+    const country = 'in';  // fixed to India
+    const category = 'health'; // you can change category as needed
 
+    const debunkList = document.getElementById('debunkList');
+    const topNews = document.getElementById('topNews');
+    const latestNews = document.getElementById('latestNews');
+    const searchInput = document.getElementById('searchInput');
+
+    // Dark mode toggle
     const toggleDark = document.getElementById('toggleDark');
     toggleDark.addEventListener('click', () => {
       document.documentElement.classList.toggle('dark');
     });
 
-    const searchInput = document.getElementById('searchInput');
-    const debunkList = document.getElementById('debunkList');
+    // Fetch news from NewsData.io
+    async function fetchNews() {
+      debunkList.innerHTML = `<p class="text-center text-gray-500 dark:text-gray-400">Loading debunked articles...</p>`;
+      topNews.innerHTML = `<li>Loading...</li>`;
+      latestNews.innerHTML = `<p>Loading...</p>`;
 
-    // Search filtering
+      try {
+        const url = `https://newsdata.io/api/1/news?apikey=${apiKey}&country=${country}&category=${category}&language=en`;
+        const res = await fetch(url);
+        const data = await res.json();
+
+        const articles = data.results || [];
+
+        if (articles.length === 0) {
+          debunkList.innerHTML = '<p class="text-center text-gray-500 dark:text-gray-400">No articles found.</p>';
+          topNews.innerHTML = '<li>No news available.</li>';
+          latestNews.innerHTML = '<p>No news available.</p>';
+          return;
+        }
+
+        debunkList.innerHTML = '';
+        topNews.innerHTML = '';
+        latestNews.innerHTML = '';
+
+        articles.forEach((article, index) => {
+          const safeImage = article.image_url || 'https://via.placeholder.com/400x200?text=No+Image';
+          const safeDesc = article.description || 'No description provided.';
+          const title = article.title || 'No title';
+          const url = article.link || '#';
+          const published = article.pubDate ? new Date(article.pubDate).toLocaleDateString() : 'N/A';
+
+          // Article card for debunkList
+          const card = `
+            <article class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow" data-keywords="${title.toLowerCase()} ${safeDesc.toLowerCase()}">
+              <h2 class="text-2xl font-bold mb-2">${title}</h2>
+              <p class="text-${index % 2 === 0 ? 'red' : 'green'}-600 font-semibold mb-2">❌ Verdict: Unverified</p>
+              <p class="mb-3">${safeDesc}</p>
+              <div class="text-sm mt-4 border-t pt-2 dark:border-gray-600">
+                <p>Source: <a href="${url}" target="_blank" class="text-teal-600 dark:text-teal-400 hover:underline">Read more</a></p>
+                <p>Published: <strong>${published}</strong></p>
+              </div>
+            </article>
+          `;
+          debunkList.innerHTML += card;
+
+          // Sidebars
+          if (index < 3) {
+            topNews.innerHTML += `<li><a href="${url}" target="_blank" class="text-blue-700 dark:text-blue-400 hover:underline">${title}</a></li>`;
+          }
+          latestNews.innerHTML += `
+            <div class="bg-white dark:bg-gray-800 p-4 rounded shadow hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
+              <h3 class="font-bold text-sm">${title}</h3>
+            </div>
+          `;
+        });
+      } catch (error) {
+        console.error("Failed to fetch from NewsData.io:", error);
+        debunkList.innerHTML = '<p class="text-red-500">Failed to load news from NewsData.io API.</p>';
+        topNews.innerHTML = '<li>Failed to load top news.</li>';
+        latestNews.innerHTML = '<p>Failed to load latest news.</p>';
+      }
+    }
+
+    // Initial fetch
+    fetchNews();
+
+    // Search filtering for debunked claims
     searchInput.addEventListener('input', () => {
       const value = searchInput.value.toLowerCase();
       const articles = document.querySelectorAll('#debunkList article');
@@ -94,50 +164,8 @@
         article.style.display = keywords.includes(value) ? 'block' : 'none';
       });
     });
-
-    // Fetch news from Mediastack
-    fetch(API_URL)
-      .then(res => res.json())
-      .then(data => {
-        const articles = data.data || [];
-        debunkList.innerHTML = '';
-        const topNews = document.getElementById('topNews');
-        const latestNews = document.getElementById('latestNews');
-        topNews.innerHTML = '';
-        latestNews.innerHTML = '';
-
-        articles.forEach((article, index) => {
-          const safeImage = article.image || 'https://via.placeholder.com/400x200?text=No+Image';
-          const safeDesc = article.description || 'No description provided.';
-          const card = `
-            <article class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow" data-keywords="${article.title.toLowerCase()} ${safeDesc.toLowerCase()}">
-              <h2 class="text-2xl font-bold mb-2">${article.title}</h2>
-              <p class="text-${index % 2 === 0 ? 'red' : 'green'}-600 font-semibold mb-2">❌ Verdict: Unverified</p>
-              <p class="mb-3">${safeDesc}</p>
-              <div class="text-sm mt-4 border-t pt-2 dark:border-gray-600">
-                <p>Source: <a href="${article.url}" target="_blank" class="text-teal-600 dark:text-teal-400 hover:underline">Read more</a></p>
-                <p>Published: <strong>${article.published_at ? new Date(article.published_at).toLocaleDateString() : 'N/A'}</strong></p>
-              </div>
-            </article>
-          `;
-          debunkList.innerHTML += card;
-
-          // Sidebars
-          if (index < 3) {
-            topNews.innerHTML += `<li><a href="${article.url}" target="_blank" class="text-blue-700 dark:text-blue-400 hover:underline">${article.title}</a></li>`;
-          }
-          latestNews.innerHTML += `
-            <div class="bg-white dark:bg-gray-800 p-4 rounded shadow hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
-              <h3 class="font-bold text-sm">${article.title}</h3>
-            </div>
-          `;
-        });
-      })
-      .catch(err => {
-        console.error("Failed to fetch from Mediastack:", err);
-        debunkList.innerHTML = '<p class="text-red-500">Failed to load news from Mediastack API.</p>';
-      });
   </script>
 
 </body>
 </html>
+
