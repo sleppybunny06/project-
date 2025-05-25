@@ -6,6 +6,7 @@
   <title>Global Health News & Information</title>
 
   <style>
+    /* ... your existing CSS ... */
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -141,7 +142,6 @@
 
   <script>
     const API_KEY = 'pub_80e03d38b2ea494298c400eedc9c17fa'; // Your NewsData.io API key
-    // Removed country=in filter temporarily for mobile testing
     const API_URL = `https://newsdata.io/api/1/news?apikey=${API_KEY}&category=health&language=en&limit=6`;
 
     function createNewsCard(article) {
@@ -207,12 +207,10 @@
       }
     }
 
-    // Initial fetch
     fetchNewsAndUpdate();
-
-    // Refresh every 60 seconds
     setInterval(fetchNewsAndUpdate, 60000);
   </script>
 </body>
 </html>
+
 
